@@ -71,10 +71,6 @@ jobs:
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
         with:
           cache-read-only: ${{ matrix.chunk.number > 1 }}
-        
-      - name: Debug Gradle plugin resolution
-        run: |
-          ./gradlew help --stacktrace
 
       - name: Prepare signing key
         run: |
@@ -138,7 +134,7 @@ jobs:
       - name: Checkout repo branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: Sabin-DC/extensions
+          repository: Sabin-DC/extensions-source
           token: ${{ secrets.BOT_PAT }}
           ref: repo
           path: repo
@@ -159,8 +155,8 @@ jobs:
             git add .
             git commit -m "Update extensions repo"
             git push
-            curl https://purge.jsdelivr.net/gh/Sabin-DC/extensions@repo/index.json
-            curl https://purge.jsdelivr.net/gh/Sabin-DC/extensions@repo/index.pb
+            curl https://purge.jsdelivr.net/gh/Sabin-DC/extensions-source@repo/index.json
+            curl https://purge.jsdelivr.net/gh/Sabin-DC/extensions-source@repo/index.pb
           else
             echo "No changes to commit"
           fi
