@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - custom
     paths:
       - '**'
       - '!**.md'
@@ -91,7 +91,7 @@ jobs:
 
       - name: Upload APKs (${{ matrix.chunk.number }})
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: "github.repository == 'keiyoushi/extensions-source'"
+        if: "github.repository == 'Sabin-DC/extensions-source'"
         with:
           name: "individual-apks-${{ matrix.chunk.number }}"
           path: |
@@ -110,11 +110,12 @@ jobs:
     # Run whenever there's anything to publish, new/changed builds OR only deletions
     if: >-
       always() &&
-      github.repository == 'keiyoushi/extensions-source' &&
+      github.repository == 'Sabin-DC/extensions-source' &&
       needs.prepare.result == 'success' &&
       needs.build.result != 'failure' &&
       needs.build.result != 'cancelled' &&
       needs.prepare.outputs.delete != '[]'
+      (needs.build.result == 'success' || needs.prepare.outputs.delete != '[]')
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -127,14 +128,14 @@ jobs:
       - name: Checkout main branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: main
+          ref: custom
           path: main
           persist-credentials: false
 
       - name: Checkout repo branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: keiyoushi/extensions
+          repository: Sabin-DC/extensions
           token: ${{ secrets.BOT_PAT }}
           ref: repo
           path: repo
@@ -155,8 +156,8 @@ jobs:
             git add .
             git commit -m "Update extensions repo"
             git push
-            curl https://purge.jsdelivr.net/gh/keiyoushi/extensions@repo/index.json
-            curl https://purge.jsdelivr.net/gh/keiyoushi/extensions@repo/index.pb
+            curl https://purge.jsdelivr.net/gh/Sabin-DC/extensions@repo/index.json
+            curl https://purge.jsdelivr.net/gh/Sabin-DC/extensions@repo/index.pb
           else
             echo "No changes to commit"
           fi
